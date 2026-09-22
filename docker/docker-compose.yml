@@ -1,0 +1,50 @@
+# sato-jev in Docker — CPU by default, GPU opt-in via override file.
+#
+#   docker compose up -d                                  # CPU (any host)
+#   docker compose -f docker-compose.yml -f compose-gpu.yml up -d   # GPU
+#   docker compose run --rm cli ask "s" "q?"              # one-shot CLI
+#
+# Model: put gemma-4-E4B-it-Q8_0.gguf in ./models/ first:
+#   hf download unsloth/gemma-4-E4B-it-GGUF gemma-4-E4B-it-Q8_0.gguf --local-dir ./models
+# (or point JEVMODELS at an existing dir)
+
+services:
+  llama:
+    image: ghcr.io/ggml-org/llama.cpp:server
+    container_name: sato-jev-llama
+    volumes:
+      - ${JEVMODELS:-./models}:/models:ro
+    command: >
+      -m /models/gemma-4-E4B-it-Q8_0.gguf
+      --host 0.0.0.0 --port 8301 --alias gemma4-e4b
+      -c ${JEVCTX:-8192}
+      --threads ${JEVTHREADS:-8}
+    networks: [internal]
+    restart: unless-stopped
+
+  jev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: sato-jev-api
+    depends_on:
+      llama:
+        condition: service_started
+    ports:
+      - "127.0.0.1:${JEVPORT:-8300}:8300"
+    networks: [internal]
+    restart: unless-stopped
+
+  cli:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    profiles: ["cli"]
+    depends_on: [jev]
+    environment:
+      JEV_URL: http://jev:8300
+    entrypoint: ["jev"]
+    networks: [internal]
+
+networks:
+  internal: {}

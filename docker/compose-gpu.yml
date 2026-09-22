@@ -1,0 +1,17 @@
+# GPU override: docker compose -f docker-compose.yml -f compose-gpu.yml up -d
+# Requires the NVIDIA container toolkit on the host.
+services:
+  llama:
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    command: >
+      -m /models/gemma-4-E4B-it-Q8_0.gguf
+      --host 0.0.0.0 --port 8301 --alias gemma4-e4b
+      -c 16384
+      -ngl 99
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
