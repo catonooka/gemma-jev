@@ -67,4 +67,3 @@ DISPLAY=:0 XAUTHORITY=/run/user/1000/.mutter-Xwaylandauth.<suffix> \
 | 8301 | llama-server (Gemma 4 E4B) |
 | 8300 | gemma-jev decision API |
 | 9222 | headed Chrome CDP |
-| 3095 | Sato chat app (optional integration) |
