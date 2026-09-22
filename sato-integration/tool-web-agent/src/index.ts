@@ -1,9 +1,9 @@
 /**
  * Model-facing `web_agent` tool: a local Jev-style decision controller that
  * drives a headless browser (navigate → scroll/extract/download) using the
- * local simplejev decision server (Gemma 4 E4B on llama.cpp) for every
+ * local gemma-jev decision server (Gemma 4 E4B on llama.cpp) for every
  * step decision. This package owns the schema, dispatch, spawn, and result
- * rendering; the Python controller (`~/simplejev/webagent.py`) owns the loop.
+ * rendering; the Python controller (`~/gemma-jev/webagent.py`) owns the loop.
  *
  * Registers nothing by itself: the composition calls defineWebAgentTool and
  * registers the result, mirroring tool-browser-chrome.
@@ -26,7 +26,7 @@ export interface WebAgentToolOptions {
   script?: string
   /** CDP controller script path (drives the user's visible Chrome). */
   cdpScript?: string
-  /** simplejev decision server URL. */
+  /** gemma-jev decision server URL. */
   jevUrl?: string | undefined
   /** Python interpreter with playwright + httpx. */
   python?: string
@@ -45,8 +45,8 @@ export interface WebAgentToolValue {
   collected?: { title: string; company: string; location: string; url: string }[]
 }
 
-const DEFAULT_SCRIPT = '/home/aisever/simplejev/webagent.py'
-const CDP_SCRIPT = '/home/aisever/simplejev/webagent-cdp.py'
+const DEFAULT_SCRIPT = '/home/aisever/gemma-jev/webagent.py'
+const CDP_SCRIPT = '/home/aisever/gemma-jev/webagent-cdp.py'
 const DEFAULT_PYTHON = '/home/aisever/vllm-env/bin/python'
 const DEFAULT_TIMEOUT_MS = 300_000
 
@@ -103,7 +103,7 @@ export function defineWebAgentTool(options: WebAgentToolOptions = {}) {
     async execute(args: { url?: string; goal: string; query?: string; location?: string; want?: number; max_rounds?: number }): Promise<WebAgentToolValue> {
       const outDir = await mkdtemp(join(tmpdir(), 'webagent-'))
       const env = { ...process.env }
-      if (options.jevUrl !== undefined) env.SIMPLEJEV_URL = options.jevUrl
+      if (options.jevUrl !== undefined) env.GEMMAJEV_URL = options.jevUrl
       const useCdp = args.query !== undefined && args.query.trim() !== ''
       const scriptToRun = useCdp ? cdpScript : script
       const argv = [scriptToRun]

@@ -5,7 +5,7 @@ line on stdout — perfect for shell substitution — or full JSON with `--json`
 
 ## Install
 ```bash
-ln -sf ~/simplejev/jev ~/.local/bin/jev        # or anywhere on PATH
+ln -sf ~/gemma-jev/jev ~/.local/bin/jev        # or anywhere on PATH
 jev-setup start                                 # bring the stack up (first run downloads the model)
 ```
 

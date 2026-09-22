@@ -25,12 +25,12 @@ Notes:
 - Use the **`/v1/chat/completions`** endpoint with `logprobs` — not raw `/completion`. Gemma's chat template changes the first-token distribution; raw completion reads a newline. This is wired into `server.py` already.
 - Under load GPU0 draws ~165W; idle serving is ~33W.
 
-## 3. Decision server — simplejev (port 8300)
+## 3. Decision server — gemma-jev (port 8300)
 
 ```bash
 pip install fastapi uvicorn httpx pydantic
 python server.py
-# env: SIMPLEJEV_UPSTREAM (default http://127.0.0.1:8301), SIMPLEJEV_PORT (8300)
+# env: GEMMAJEV_UPSTREAM (default http://127.0.0.1:8301), GEMMAJEV_PORT (8300)
 ```
 
 Health: `GET /health` · Readiness (runs one real read): `GET /ready`
@@ -65,6 +65,6 @@ DISPLAY=:0 XAUTHORITY=/run/user/1000/.mutter-Xwaylandauth.<suffix> \
 | Port | Service |
 |---|---|
 | 8301 | llama-server (Gemma 4 E4B) |
-| 8300 | simplejev decision API |
+| 8300 | gemma-jev decision API |
 | 9222 | headed Chrome CDP |
 | 3095 | Sato chat app (optional integration) |

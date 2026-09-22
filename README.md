@@ -1,4 +1,4 @@
-# sato-jev
+# gemma-jev
 
 **A local, open, super-fast Jev alternative for Sato** — Google Gemma 4 E4B reading single-token option logits on llama.cpp, driving a real visible Chrome browser as a web controller.
 
@@ -6,7 +6,7 @@ Jev (TypeSafe AI's "System One" decision model) costs ~$0.00004/call at 352ms ov
 
 ```
 ┌─────────────┐    /v1/request     ┌──────────────────┐    logprob read    ┌─────────────────┐
-│  Sato chat  │ ─────────────────▶ │  simplejev       │ ─────────────────▶ │ llama-server    │
+│  Sato chat  │ ─────────────────▶ │  gemma-jev       │ ─────────────────▶ │ llama-server    │
 │  web_agent  │   noul/choice/     │  server (:8300)  │   one forward pass │ Gemma 4 E4B Q8  │
 │  tool       │ ◀───────────────── │                  │ ◀───────────────── │ (GPU0)          │
 └─────────────┘   typed answers    └──────────────────┘   label probs        └─────────────────┘
@@ -23,7 +23,7 @@ Jev (TypeSafe AI's "System One" decision model) costs ~$0.00004/call at 352ms ov
 
 | File | What it is |
 |---|---|
-| `server.py` | **simplejev** — Jev-shaped decision API (`POST /v1/request`: `noul` / `choice` / `score` questions → answers with probabilities + distributions). One logprob read per decision. |
+| `server.py` | **gemma-jev** — Jev-shaped decision API (`POST /v1/request`: `noul` / `choice` / `score` questions → answers with probabilities + distributions). One logprob read per decision. |
 | `webagent-cdp.py` | Jev-controlled web agent driving your **visible Chrome** over CDP: search, scroll, harvest, open detail pages. Built against Indeed's bot walls. |
 | `webagent.py` | Headless variant (Playwright chromium) for bulk collection on friendly sites. |
 | `jobcrawl.py` | Public job-API pipeline: Arbeitnow + Remotive → local jev gates every listing → LAN Qwen structures winners to JSON. |
@@ -75,7 +75,7 @@ python webagent-cdp.py --query ".NET developer" \
 
 ### Latency (60 decisions, warm)
 
-| | sato-jev (local) | djev (hosted) | Jev 1.13 (hosted) |
+| | gemma-jev (local) | djev (hosted) | Jev 1.13 (hosted) |
 |---|---|---|---|
 | Model | Gemma 4 E4B Q8 (8.2GB) | DiffusionGemma 26B | closed |
 | Hardware | 1× RTX 3090 | their cluster | their cluster |
@@ -85,7 +85,7 @@ python webagent-cdp.py --query ".NET developer" \
 
 ### Accuracy (JevBench-method, same datasets as the independent Jev harness)
 
-| Task | sato-jev | Jev published | n |
+| Task | gemma-jev | Jev published | n |
 |---|---|---|---|
 | Banking77 intent (8-label subset) | **100%** | 80.3% (full 77) | 40 |
 | InjecAgent-style prompt injection | 91.7% | ~100% P/R @thr 0.10 | 12 |
@@ -94,9 +94,9 @@ python webagent-cdp.py --query ".NET developer" \
 
 Honest reading: genuinely competitive on banking-intent and injection-safety tasks; Jev clearly keeps the crown on fine-grained multi-class intent (SNIPS). For controller work — binary/3-way gates like scroll/extract/relevance — it's more than enough, at ~10x the speed and zero cost. See `docs/benchmarks.md`.
 
-## Why "SimpleJev" style
+## Why "GemmaJev" style
 
-The reference open implementation (Davipar/djev-dev) pins DiffusionGemma-26B in BF16 (~52GB, TP=1, one GPU per process) — not feasible on consumer dual-24GB rigs. The SimpleJev approach instead reads **next-token option logits from a stock small open model**: build a prompt where each option maps to a single letter token (A/B/C…), run one forward pass, normalize the letters' logprobs into a distribution. No prose generation, no JSON parsing, no special architecture. Any OpenAI-compatible server with a logprobs endpoint works.
+The reference open implementation (Davipar/djev-dev) pins DiffusionGemma-26B in BF16 (~52GB, TP=1, one GPU per process) — not feasible on consumer dual-24GB rigs. The GemmaJev approach instead reads **next-token option logits from a stock small open model**: build a prompt where each option maps to a single letter token (A/B/C…), run one forward pass, normalize the letters' logprobs into a distribution. No prose generation, no JSON parsing, no special architecture. Any OpenAI-compatible server with a logprobs endpoint works.
 
 ## Lessons baked into this code (the valuable part)
 

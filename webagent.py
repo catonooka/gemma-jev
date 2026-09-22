@@ -3,7 +3,7 @@ webagent: Jev-style local controller driving a real browser (Playwright).
 
 Loop:
   1. open the target URL
-  2. ask the local simplejev server: { scroll_more?, found?, relevance } each round
+  2. ask the local gemma-jev server: { scroll_more?, found?, relevance } each round
   3. scroll while it says yes; extract links/text it marks relevant
   4. download the files/pages it approves, with per-file verdicts logged
 
@@ -22,7 +22,7 @@ from pathlib import Path
 
 import httpx
 
-JEV = os.environ.get("SIMPLEJEV_URL", "http://127.0.0.1:8300")
+JEV = os.environ.get("GEMMAJEV_URL", "http://127.0.0.1:8300")
 STATE_CHAR_BUDGET = 6000
 
 

@@ -30,7 +30,7 @@ Only miss: "misaligned footer logo" flagged urgent (p=0.996) — the model treat
 
 Same dataset families the independent Jev harness used, same decision shape, smaller samples:
 
-| Task | sato-jev | Jev (published) | n | Note |
+| Task | gemma-jev | Jev (published) | n | Note |
 |---|---|---|---|---|
 | Banking77 intent (8-label subset) | **100%** | 80.3% | 40 | ours is an easier 8-label subset of their 77 |
 | InjecAgent-style prompt injection | **91.7%** | ~100% P/R @thr 0.10 | 12 | caught 5/6 attack phrasings |
@@ -56,8 +56,8 @@ can additionally serve as a full LLM (141-145 t/s generation) from the same proc
 
 Reading: E4B is the default for speed, footprint, and CPU deployability. The 26B
 is strictly more accurate and doubles as the chat model — swap by pointing
-`SIMPLEJEV_UPSTREAM` at its llama-server and setting
-`SIMPLEJEV_DISABLE_THINKING=1` (the QAT build emits a thinking-channel token
+`GEMMAJEV_UPSTREAM` at its llama-server and setting
+`GEMMAJEV_DISABLE_THINKING=1` (the QAT build emits a thinking-channel token
 first, which hides answer letters). MTP/dual-GPU on the 26B was tested and
 rejected: layer-split + MoE batch-1 verification lost to single-GPU plain
 (130 vs 141 t/s).

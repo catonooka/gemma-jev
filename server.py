@@ -1,7 +1,7 @@
 """
-simplejev-server: Jev-compatible local decision API on top of llama-server.
+gemma-jev-server: Jev-compatible local decision API on top of llama-server.
 
-SimpleJev approach (per the open benchmarks): read next-token option logits
+GemmaJev approach (per the open benchmarks): read next-token option logits
 from a stock small open model — one forward pass per decision, no prose
 generation, no JSON parsing. Endpoint shape follows the Jev/djev contract:
 
@@ -31,13 +31,13 @@ import httpx
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-UPSTREAM = os.environ.get("SIMPLEJEV_UPSTREAM", "http://127.0.0.1:8301")
-PORT = int(os.environ.get("SIMPLEJEV_PORT", "8300"))
+UPSTREAM = os.environ.get("GEMMAJEV_UPSTREAM", "http://127.0.0.1:8301")
+PORT = int(os.environ.get("GEMMAJEV_PORT", "8300"))
 MAX_STATE_CHARS = 20_000
 MAX_QUESTIONS = 32
 LOGPROB_TOP = 40  # llama-server returns top-N; letters sit far above this when primed
 
-app = FastAPI(title="simplejev-local")
+app = FastAPI(title="gemma-jev-local")
 client = httpx.AsyncClient(timeout=30.0)
 
 
@@ -102,7 +102,7 @@ async def read_markers(prompt: str, markers: list[str]) -> dict[str, float]:
         "top_logprobs": LOGPROB_TOP,
         "stream": False,
     }
-    if os.environ.get("SIMPLEJEV_DISABLE_THINKING", "0") == "1":
+    if os.environ.get("GEMMAJEV_DISABLE_THINKING", "0") == "1":
         # Thinking-first models (Gemma 4 26B/31B QAT) emit <|channel>thought
         # as the first token, hiding the answer letters. Turn thinking off so
         # the answer position starts at the letter.
@@ -180,4 +180,4 @@ async def request(body: RequestBody):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=PORT)
+    uvicorn.run(app, host=os.environ.get("GEMMAJEV_HOST", "127.0.0.1"), port=PORT)

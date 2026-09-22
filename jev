@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-jev — CLI for the local sato-jev decision server (Gemma 4 E4B).
+jev — CLI for the local gemma-jev decision server (Gemma 4 E4B).
 
 Designed for AI agents (Claude Code, Hermes, custom harnesses): zero
 dependencies beyond Python 3.9+ stdlib, machine-friendly output, one

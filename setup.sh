@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sato-jev setup + launcher: brings the local Jev stack up on any machine.
+# gemma-jev setup + launcher: brings the local Jev stack up on any machine.
 #
 #   setup.sh              download model (first run) + start everything
 #   setup.sh start        start llama-server + jev API (skips download if present)
@@ -20,10 +20,10 @@ MODEL_FILE="$MODEL_DIR/gemma-4-E4B-it-Q8_0.gguf"
 API_PORT="${JEV_PORT_API:-8300}"
 MODEL_PORT="${JEV_PORT_MODEL:-8301}"
 CTX="${JEV_CTX:-16384}"
-RUN_DIR="$HOME/.local/run/sato-jev"
+RUN_DIR="$HOME/.local/run/gemma-jev"
 mkdir -p "$RUN_DIR"
 
-log() { echo "[sato-jev] $*"; }
+log() { echo "[gemma-jev] $*"; }
 
 find_llama() {
   if [[ -n "${JEV_LLAMA_BIN:-}" ]]; then echo "$JEV_LLAMA_BIN"; return; fi
@@ -78,7 +78,7 @@ start() {
 
   log "starting jev API on :$API_PORT"
   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  SIMPLEJEV_UPSTREAM="http://127.0.0.1:$MODEL_PORT" SIMPLEJEV_PORT="$API_PORT" \
+  GEMMAJEV_UPSTREAM="http://127.0.0.1:$MODEL_PORT" GEMMAJEV_PORT="$API_PORT" \
     nohup python3 "$SCRIPT_DIR/server.py" >"$RUN_DIR/jev.log" 2>&1 &
   echo $! >"$RUN_DIR/jev.pid"
 
@@ -93,7 +93,7 @@ stop() {
   for f in "$RUN_DIR/llama.pid" "$RUN_DIR/jev.pid"; do
     [[ -f "$f" ]] && { kill "$(cat "$f")" 2>/dev/null || true; rm -f "$f"; }
   done
-  pkill -f "simplejev/server.py" 2>/dev/null || true
+  pkill -f "gemma-jev/server.py" 2>/dev/null || true
   pkill -f "gemma-4-E4B-it-Q8_0" 2>/dev/null || true
   log "stopped"
 }

@@ -1,6 +1,6 @@
 {
   "name": "@deepseek-ai/dsh-tool-web-agent",
-  "description": "Model-facing web_agent tool: local Jev-style decision controller (Gemma 4 E4B via simplejev) driving a headless browser — navigate, decide scroll/extract per step, download goal-relevant data",
+  "description": "Model-facing web_agent tool: local Jev-style decision controller (Gemma 4 E4B via gemma-jev) driving a headless browser — navigate, decide scroll/extract per step, download goal-relevant data",
   "version": "0.1.0",
   "publishConfig": {
     "access": "public"

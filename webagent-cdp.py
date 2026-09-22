@@ -23,7 +23,7 @@ from pathlib import Path
 
 import httpx
 
-JEV = os.environ.get("SIMPLEJEV_URL", "http://127.0.0.1:8300")
+JEV = os.environ.get("GEMMAJEV_URL", "http://127.0.0.1:8300")
 CDP = os.environ.get("CDP_URL", "http://127.0.0.1:9222")
 STATE_CHAR_BUDGET = 6000
 

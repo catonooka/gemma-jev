@@ -1,4 +1,4 @@
-# sato-jev in Docker — CPU by default, GPU opt-in via override file.
+# gemma-jev in Docker — CPU by default, GPU opt-in via override file.
 #
 #   docker compose up -d                                  # CPU (any host)
 #   docker compose -f docker-compose.yml -f compose-gpu.yml up -d   # GPU
@@ -11,7 +11,7 @@
 services:
   llama:
     image: ghcr.io/ggml-org/llama.cpp:server
-    container_name: sato-jev-llama
+    container_name: gemma-jev-llama
     volumes:
       - ${JEVMODELS:-./models}:/models:ro
     command: >
@@ -26,7 +26,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    container_name: sato-jev-api
+    container_name: gemma-jev-api
     depends_on:
       llama:
         condition: service_started

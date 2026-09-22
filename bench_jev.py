@@ -1,5 +1,5 @@
 """
-bench_jev: latency + accuracy benchmark for the local simplejev server.
+bench_jev: latency + accuracy benchmark for the local gemma-jev server.
 
 Part 1 (latency): N mixed noul/choice decisions, report p50/p95/p99 + tps.
 Part 2 (accuracy): labeled test set with known-correct answers.
@@ -119,6 +119,6 @@ async def main():
     print(f"ACCURACY: {acc['correct']}/{acc['n']} = {acc['accuracy']*100:.1f}%")
     for f in acc["failures"]:
         print(f"  MISS: expected={f['expected']} got={f['got']} (p={f['p']}) :: {f['state']}")
-    json.dump({"latency": lat, "accuracy": acc}, open("/home/aisever/simplejev/bench_results.json", "w"), indent=1)
+    json.dump({"latency": lat, "accuracy": acc}, open("/home/aisever/gemma-jev/bench_results.json", "w"), indent=1)
 
 asyncio.run(main())

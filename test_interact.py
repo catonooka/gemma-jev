@@ -24,7 +24,7 @@ import httpx
 
 CDP = "http://127.0.0.1:9222"
 JEV = "http://127.0.0.1:8300"
-OUT = Path("/home/aisever/simplejev/interact_test")
+OUT = Path("/home/aisever/gemma-jev/interact_test")
 OUT.mkdir(parents=True, exist_ok=True)
 
 results = {"interactions": [], "cards": [], "filter": None}

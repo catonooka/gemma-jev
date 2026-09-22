@@ -1,4 +1,4 @@
-# simplejev API
+# gemma-jev API
 
 `server.py` exposes a Jev-shaped local decision API. One decision = one forward pass = one logprob read.
 
@@ -46,7 +46,7 @@
 
 Each option maps to a single letter token (`A`, `B`, `C`…). The prompt renders the state, the question, and lettered options, ending at the answer position. llama-server's `/v1/chat/completions` is called with `max_tokens: 1, temperature: 0, logprobs: true, top_logprobs: 40`; the letters' logprobs are softmax-normalized over the option set. Absent letters get a −30 floor. No text is generated; no JSON is parsed out of prose.
 
-Swap the backend freely: any OpenAI-compatible server that returns `top_logprobs` works (`SIMPLEJEV_UPSTREAM`). Bigger backend model → better fine-grained accuracy, same API.
+Swap the backend freely: any OpenAI-compatible server that returns `top_logprobs` works (`GEMMAJEV_UPSTREAM`). Bigger backend model → better fine-grained accuracy, same API.
 
 ## Other endpoints
 
