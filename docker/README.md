@@ -27,3 +27,12 @@ CPU mode is fully usable for interactive gating; use GPU for high-volume loops.
 
 Env knobs: `JEVMODELS` (model dir), `JEVPORT` (host API port, default 8300),
 `JEVCTX` (context, default 8192 CPU / 16384 GPU), `JEVTHREADS` (CPU threads).
+
+## LAN serving
+By default the API binds `0.0.0.0` (reachable from your local network at
+`http://<host-ip>:8300`). To restrict to loopback only:
+```bash
+JEVBIND=127.0.0.1 docker compose up -d
+```
+There is no auth on the API — treat it like any other LAN service and keep
+it off untrusted networks.

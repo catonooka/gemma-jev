@@ -31,7 +31,7 @@ services:
       llama:
         condition: service_started
     ports:
-      - "127.0.0.1:${JEVPORT:-8300}:8300"
+      - "${JEVBIND:-0.0.0.0}:${JEVPORT:-8300}:8300"
     networks: [internal]
     restart: unless-stopped
 
