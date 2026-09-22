@@ -94,14 +94,20 @@ PROMPT_TMPL = (
 
 async def read_markers(prompt: str, markers: list[str]) -> dict[str, float]:
     """One llama-server chat completion; returns marker -> probability."""
-    r = await client.post(f"{UPSTREAM}/v1/chat/completions", json={
+    body: dict = {
         "messages": [{"role": "user", "content": prompt}],
         "max_tokens": 1,
         "temperature": 0.0,
         "logprobs": True,
         "top_logprobs": LOGPROB_TOP,
         "stream": False,
-    })
+    }
+    if os.environ.get("SIMPLEJEV_DISABLE_THINKING", "0") == "1":
+        # Thinking-first models (Gemma 4 26B/31B QAT) emit <|channel>thought
+        # as the first token, hiding the answer letters. Turn thinking off so
+        # the answer position starts at the letter.
+        body["chat_template_kwargs"] = {"enable_thinking": False}
+    r = await client.post(f"{UPSTREAM}/v1/chat/completions", json=body)
     r.raise_for_status()
     data = r.json()
     lp = (data["choices"][0].get("logprobs") or {}).get("content") or []
