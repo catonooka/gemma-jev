@@ -1,0 +1,12 @@
+# .gitignore
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+lib/
+*.gguf
+jobcrawl_out/
+webagent_out/
+webagent_cdp_out/
+interact_test/
+.DS_Store
