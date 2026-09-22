@@ -144,22 +144,15 @@ async def request(body: RequestBody):
     if not body.questions or len(body.questions) > MAX_QUESTIONS:
         raise HTTPException(400, f"1..{MAX_QUESTIONS} questions required")
     answers: dict[str, Any] = {}
-    # joint read: all questions in ONE prompt, one marker line per answer
-    blocks: list[str] = []
+    # One forward pass per question (single-token reads are cheap; a joint
+    # multi-answer read has no reliable answer positions).
     marker_map: dict[str, list[str]] = {}
     label_map: dict[str, list[str]] = {}
     for name, spec in body.questions.items():
-        block, markers = build_question_block(name, spec)
-        blocks.append(block)
+        _, markers = build_question_block(name, spec)
         marker_map[name] = markers
         criteria = spec.get("criteria") or {}
         label_map[name] = list(criteria.keys()) if criteria else ["yes", "no"]
-    prompt = PROMPT_TMPL.format(
-        state=body.state[:MAX_STATE_CHARS],
-        questions="\n\n".join(blocks) + "\n",
-    )
-    # Single forward pass: we ask for the FIRST question's marker position.
-    # For multi-question requests we do per-question reads (still one pass each).
     for name, spec in body.questions.items():
         q_prompt = PROMPT_TMPL.format(
             state=body.state[:MAX_STATE_CHARS],
