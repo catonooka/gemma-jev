@@ -38,6 +38,30 @@ Same dataset families the independent Jev harness used, same decision shape, sma
 
 Honest reading: competitive on banking-intent and injection safety; clearly behind on fine-grained multi-class intent. Single-token letter reads lose resolution when options are semantically close ("SearchPlace" vs "GetPlaceDetails"). If a use case needs fine multi-class, either (a) swap the backend model (any OpenAI-compatible server with logprobs — try Gemma 4 26B-A4B Q4), or (b) do a two-stage read: letter-choice shortlist → per-candidate noul verification (the "compete first, verify second" pattern from the Jev harness research).
 
+## Backend comparison: E4B (default) vs 26B-A4B QAT
+
+Both measured on the same rig, same tests. The 26B runs on one 3090 (14.4GB) and
+can additionally serve as a full LLM (141-145 t/s generation) from the same process.
+
+| | **E4B Q8 (default)** | 26B-A4B QAT q4_0 |
+|---|---|---|
+| Decision p50 | **33.6 ms** | 48.4 ms |
+| Decision p95 | 53.5 ms | 141.1 ms |
+| VRAM | 5.9 GB | 16.9 GB |
+| Controller set (22) | 95.5% | **100%** |
+| SNIPS intent | 66.7% | **86.7%** |
+| Banking77 subset | 100% | 100% |
+| Prompt injection | 91.7% | **100%** |
+| + LLM generation | — | 141-145 t/s |
+
+Reading: E4B is the default for speed, footprint, and CPU deployability. The 26B
+is strictly more accurate and doubles as the chat model — swap by pointing
+`SIMPLEJEV_UPSTREAM` at its llama-server and setting
+`SIMPLEJEV_DISABLE_THINKING=1` (the QAT build emits a thinking-channel token
+first, which hides answer letters). MTP/dual-GPU on the 26B was tested and
+rejected: layer-split + MoE batch-1 verification lost to single-GPU plain
+(130 vs 141 t/s).
+
 ## End-to-end crawl timings
 
 | Task | Time | Notes |
