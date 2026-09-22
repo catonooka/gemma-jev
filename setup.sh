@@ -16,7 +16,7 @@
 set -euo pipefail
 
 MODEL_DIR="${JEV_MODEL_DIR:-$HOME/models/gemma4-e4b}"
-MODEL_FILE="$MODEL_DIR/gemma-4-E4B-it-Q8_0.gguf"
+MODEL_FILE="$MODEL_DIR/gemma-4-E4B-it-Q4_K_M.gguf"
 API_PORT="${JEV_PORT_API:-8300}"
 MODEL_PORT="${JEV_PORT_MODEL:-8301}"
 CTX="${JEV_CTX:-16384}"
@@ -40,14 +40,14 @@ download_model() {
   log "downloading Gemma 4 E4B Q8_0 (8.2GB) to $MODEL_DIR ..."
   mkdir -p "$MODEL_DIR"
   if command -v hf >/dev/null 2>&1; then
-    hf download unsloth/gemma-4-E4B-it-GGUF gemma-4-E4B-it-Q8_0.gguf --local-dir "$MODEL_DIR"
+    hf download unsloth/gemma-4-E4B-it-GGUF gemma-4-E4B-it-Q4_K_M.gguf --local-dir "$MODEL_DIR"
   elif command -v huggingface-cli >/dev/null 2>&1; then
-    huggingface-cli download unsloth/gemma-4-E4B-it-GGUF gemma-4-E4B-it-Q8_0.gguf --local-dir "$MODEL_DIR"
+    huggingface-cli download unsloth/gemma-4-E4B-it-GGUF gemma-4-E4B-it-Q4_K_M.gguf --local-dir "$MODEL_DIR"
   else
     pip install -q huggingface_hub >/dev/null
     python3 -c "
 from huggingface_hub import hf_hub_download
-print(hf_hub_download('unsloth/gemma-4-E4B-it-GGUF','gemma-4-E4B-it-Q8_0.gguf', local_dir='$MODEL_DIR'))
+print(hf_hub_download('unsloth/gemma-4-E4B-it-GGUF','gemma-4-E4B-it-Q4_K_M.gguf', local_dir='$MODEL_DIR'))
 "
   fi
   log "download complete"
@@ -94,7 +94,7 @@ stop() {
     [[ -f "$f" ]] && { kill "$(cat "$f")" 2>/dev/null || true; rm -f "$f"; }
   done
   pkill -f "gemma-jev/server.py" 2>/dev/null || true
-  pkill -f "gemma-4-E4B-it-Q8_0" 2>/dev/null || true
+  pkill -f "gemma-4-E4B-it-Q4_K_M" 2>/dev/null || true
   log "stopped"
 }
 

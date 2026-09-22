@@ -8,7 +8,7 @@ Gemma 4 E4B IT, Q8_0 GGUF (8.2 GB) from unsloth:
 
 ```bash
 huggingface-cli download unsloth/gemma-4-E4B-it-GGUF \
-  gemma-4-E4B-it-Q8_0.gguf --local-dir ~/models/gemma4-e4b
+  gemma-4-E4B-it-Q4_K_M.gguf --local-dir ~/models/gemma4-e4b
 ```
 
 Other quants work; Q8_0 measured the best accuracy/speed balance here. The model uses ~5.9GB VRAM at 16k context — a 3090 runs it alongside other work.
@@ -17,7 +17,7 @@ Other quants work; Q8_0 measured the best accuracy/speed balance here. The model
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 llama-server \
-  -m ~/models/gemma4-e4b/gemma-4-E4B-it-Q8_0.gguf \
+  -m ~/models/gemma4-e4b/gemma-4-E4B-it-Q4_K_M.gguf \
   -ngl 99 -c 16384 --host 127.0.0.1 --port 8301 --alias gemma4-e4b
 ```
 

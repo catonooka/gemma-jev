@@ -4,8 +4,8 @@
 #   docker compose -f docker-compose.yml -f compose-gpu.yml up -d   # GPU
 #   docker compose run --rm cli ask "s" "q?"              # one-shot CLI
 #
-# Model: put gemma-4-E4B-it-Q8_0.gguf in ./models/ first:
-#   hf download unsloth/gemma-4-E4B-it-GGUF gemma-4-E4B-it-Q8_0.gguf --local-dir ./models
+# Model: put gemma-4-E4B-it-Q4_K_M.gguf in ./models/ first:
+#   hf download unsloth/gemma-4-E4B-it-GGUF gemma-4-E4B-it-Q4_K_M.gguf --local-dir ./models
 # (or point JEVMODELS at an existing dir)
 
 services:
@@ -15,7 +15,7 @@ services:
     volumes:
       - ${JEVMODELS:-./models}:/models:ro
     command: >
-      -m /models/gemma-4-E4B-it-Q8_0.gguf
+      -m /models/gemma-4-E4B-it-Q4_K_M.gguf
       --host 0.0.0.0 --port 8301 --alias gemma4-e4b
       -c ${JEVCTX:-8192}
       --threads ${JEVTHREADS:-8}

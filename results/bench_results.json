@@ -1,12 +1,12 @@
 {
  "latency": {
   "n": 60,
-  "min_ms": 33.1,
-  "p50_ms": 33.6,
-  "p95_ms": 53.5,
-  "p99_ms": 68.1,
-  "max_ms": 68.1,
-  "mean_ms": 35.5
+  "min_ms": 215.4,
+  "p50_ms": 221.5,
+  "p95_ms": 232.1,
+  "p99_ms": 1286.2,
+  "max_ms": 1286.2,
+  "mean_ms": 256.7
  },
  "accuracy": {
   "n": 22,
@@ -17,7 +17,7 @@
     "state": "A user reports the footer logo is slightly misaligned on one",
     "expected": "no",
     "got": "yes",
-    "p": 0.9959,
+    "p": 0.9571,
     "ok": false
    }
   ]

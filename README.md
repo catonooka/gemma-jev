@@ -18,13 +18,15 @@ Measured decision latency (warm, ~100-token state, one logprob read):
 
 | Machine | Mode | Model file | Latency | Notes |
 |---|---|---|---|---|
-| **RTX 3090** | GPU (llama.cpp CUDA) | E4B Q8_0 (8.2GB) | **~33ms** p50, 53ms p95 | 5.9GB VRAM; ~33W idle serving |
-| RTX 3090 | GPU (Docker, same) | E4B Q8_0 | ~29-36ms | container overhead ≈ zero |
-| **Threadripper PRO 3955WX** | CPU, 8 threads (Docker) | E4B Q8_0 | **~320ms** | bandwidth-bound; fine for interactive |
-| **Apple M4 Pro** | Metal via llama.cpp | E4B Q8_0 | **~90-150ms (est.)** | 273GB/s unified memory — near-GPU |
-| Apple M4 Pro | Metal | E4B Q4_K_M (4.8GB) | ~50-80ms (est.) | the sweet spot on Mac |
-| Intel i7-12600H | CPU (laptop) | E4B Q8_0 | ~700ms-1.2s (est.) | dual-channel DDR5 is the ceiling |
-| Any of the above | CPU/GPU | E4B Q4_K_M | ≈ half the Q8 time | ~2x speedup, minimal accuracy cost |
+| **RTX 3090** | GPU (llama.cpp CUDA) | E4B Q8_0 (8.2GB) | **~33ms** p50, 53ms p95 | measured; 5.9GB VRAM |
+| RTX 3090 | GPU | E4B **Q4_K_M (5.0GB, default)** | ~20-25ms (est.) | halved reads |
+| **Threadripper PRO 3955WX** | CPU, 8 threads (Docker) | E4B **Q4_K_M** | **~221ms** p50, 232ms p95 | measured |
+| Threadripper PRO 3955WX | CPU, 8 threads | E4B Q8_0 | ~320ms | measured |
+| **Apple M4 Pro** | Metal via llama.cpp | E4B Q4_K_M | **~50-80ms (est.)** | 273GB/s unified memory — near-GPU |
+| Apple M4 Pro | Metal | E4B Q8_0 | ~90-150ms (est.) | |
+| Intel i7-12600H | CPU (laptop) | E4B Q4_K_M | ~350-600ms (est.) | dual-channel DDR5 is the ceiling |
+
+Q4_K_M is the default model file: 40% smaller download, ~30% faster CPU decisions, and identical accuracy on every decision benchmark we run (controller set 95.5% and Banking77 100% on both quants; SNIPS 66.7% Q8 vs 70.0% Q4 — within noise). Q8_0 remains a drop-in if you want maximum headroom.
 
 For scale: hosted Jev 1.13 answers in ~352ms median (818ms p95) at $0.00004/call + network; djev ~240ms. A 3090 beats both by ~10x at electricity cost; an M4 Pro roughly ties or beats them with zero marginal cost and full privacy.
 
@@ -63,7 +65,9 @@ Honest reading: excellent at binary/few-option judgments (the controller/guardra
 
 ```bash
 git clone https://github.com/catonooka/gemma-jev && cd gemma-jev/docker
-hf download unsloth/gemma-4-E4B-it-GGUF gemma-4-E4B-it-Q8_0.gguf --local-dir ./models
+# any of these work:
+#   hf download unsloth/gemma-4-E4B-it-GGUF gemma-4-E4B-it-Q4_K_M.gguf --local-dir ./models
+#   curl -L -o models/gemma-4-E4B-it-Q4_K_M.gguf "https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF/resolve/main/gemma-4-E4B-it-Q4_K_M.gguf"
 docker compose up -d                                        # CPU
 # GPU host (nvidia toolkit installed):
 #   docker compose -f docker-compose.yml -f compose-gpu.yml up -d
@@ -84,7 +88,7 @@ jev ask "Job: Senior .NET dev, C# ASP.NET" "is this a .NET job?"
 
 ```bash
 brew install llama.cpp
-llama-server -m ~/models/gemma-4-E4B-it-Q8_0.gguf -ngl 99 -c 8192 --port 8301
+llama-server -m ~/models/gemma-4-E4B-it-Q4_K_M.gguf -ngl 99 -c 8192 --port 8301
 python3 server.py       # from this repo
 jev ask "anything" "yes or no question?"
 ```

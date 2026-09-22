@@ -1,5 +1,5 @@
 """
-jevbench_mini: JevBench-style evaluation of the local gemma-jev server,
+jevbench_mini: JevBench-style evaluation of the local simplejev server,
 using the same public dataset families the independent Jev harness used:
   - SNIPS intent classification (7 intents)
   - Banking77 intent classification (77 intents) — subsampled labels
@@ -12,12 +12,13 @@ to the published Jev harness numbers.
 
 import asyncio
 import json
+import os
 import random
 import time
 
 import httpx
 
-JEV = "http://127.0.0.1:8300"
+JEV = os.environ.get("JEV_URL", "http://127.0.0.1:8300")
 
 SNIPS_LABELS = []  # filled from features at load time
 
@@ -158,7 +159,7 @@ async def main():
             if p["gold"] != p["pred"]:
                 print(f"  MISS gold={p['gold']} pred={p['pred']} p={p['p']}: {p['text']}")
 
-    json.dump(report, open("/home/aisever/gemma-jev/jevbench_mini.json", "w"), indent=1)
-    print("saved -> ~/gemma-jev/jevbench_mini.json")
+    json.dump(report, open("/home/aisever/gemma-jev-work/jevbench_mini.json", "w"), indent=1)
+    print("saved -> ~/simplejev/jevbench_mini.json")
 
 asyncio.run(main())
